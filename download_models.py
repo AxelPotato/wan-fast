@@ -18,12 +18,20 @@ LIGHTX2V_REPO_ID = "lightx2v/Wan2.2-Distill-Models"
 LIGHTX2V_FILENAME = "wan2.2_t2v_A14b_low_noise_scaled_fp8_e4m3_lightx2v_4step.safetensors"
 LIGHTX2V_DIR = os.path.join(MODEL_ROOT, "LightX2V")
 
+def is_official_base_present():
+    """Check if the official model has its key subdirectories."""
+    required = ["model_index.json", "vae", "text_encoder"]
+    return all(os.path.exists(os.path.join(OFFICIAL_DIR, r)) for r in required)
+
 def download_official_base():
     """
     Downloads the full official repository.
     This ensures we have the correct folder structure (vae/, text_encoder/, etc.)
     required by the WanPipeline.
     """
+    if is_official_base_present():
+        print(f"[+] Official base model already exists at: {OFFICIAL_DIR}, skipping.")
+        return
     print(f"[-] Downloading Official Base Model: {OFFICIAL_REPO_ID}...")
     try:
         snapshot_download(
@@ -31,10 +39,6 @@ def download_official_base():
             local_dir=OFFICIAL_DIR,
             local_dir_use_symlinks=False,
             resume_download=True,
-            # We exclude the massive original FP32 transformer if we only plan to use LightX2V
-            # However, for safety/fallback, we often download everything. 
-            # Uncomment the line below to save ~30GB if you ONLY want LightX2V:
-            # ignore_patterns=["transformer/*.pth", "transformer/*.safetensors"]
         )
         print(f"[+] Official model downloaded to: {OFFICIAL_DIR}")
     except Exception as e:
@@ -46,6 +50,10 @@ def download_lightx2v_distill():
     Downloads the specific 4-step distilled FP8 checkpoint.
     This replaces the standard transformer to enable ~6s generation speed.
     """
+    weights_path = os.path.join(LIGHTX2V_DIR, LIGHTX2V_FILENAME)
+    if os.path.isfile(weights_path):
+        print(f"[+] LightX2V weights already exist at: {weights_path}, skipping.")
+        return
     print(f"[-] Downloading LightX2V Distilled Weights (FP8)...")
     try:
         hf_hub_download(
@@ -55,7 +63,7 @@ def download_lightx2v_distill():
             local_dir_use_symlinks=False,
             resume_download=True
         )
-        print(f"[+] LightX2V weights downloaded to: {LIGHTX2V_DIR}/{LIGHTX2V_FILENAME}")
+        print(f"[+] LightX2V weights downloaded to: {weights_path}")
     except Exception as e:
         print(f"[!] Error downloading LightX2V weights: {e}")
         sys.exit(1)
