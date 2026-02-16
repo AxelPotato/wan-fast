@@ -1,7 +1,6 @@
 import os
 import torch
 from diffusers import WanPipeline
-from diffusers.models.attention_processor import AttnProcessor2_0
 try:
     from sageattention import sageattn
     SAGE_ATTENTION_AVAILABLE = True

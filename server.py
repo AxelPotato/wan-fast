@@ -1,8 +1,9 @@
+import math
 import multiprocessing
 import os
 import uuid
 import uvicorn
-from fastapi import FastAPI, HTTPException, Request, Security
+from fastapi import FastAPI, HTTPException, Security
 from fastapi.responses import FileResponse
 from fastapi.security import APIKeyHeader
 from starlette.status import HTTP_403_FORBIDDEN
@@ -27,7 +28,6 @@ FPS = 24
 def seconds_to_frames(seconds: float) -> int:
     """Convert seconds to the nearest valid Wan frame count (must be 4k+1)."""
     raw_frames = seconds * FPS
-    import math
     k = max(1, math.ceil((raw_frames - 1) / 4))
     return 4 * k + 1
 
@@ -48,7 +48,7 @@ class JobResponse(BaseModel):
 # --- Worker Function ---
 def gpu_worker(device_id, queue, status_dict, output_dir, model_path):
     # Set CUDA_VISIBLE_DEVICES to ensure isolation
-    os.environ = str(device_id)
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(device_id)
     
     # Initialize Engine (Expensive operation, done once)
     engine = WanInferenceEngine(0, model_path) # Always 0 inside the isolated process

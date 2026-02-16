@@ -47,8 +47,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
 # Copy Pre-Built Python Packages from Builder Stage
 COPY --from=builder /usr/local/lib/python3.10/dist-packages /usr/local/lib/python3.10/dist-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
@@ -58,7 +56,7 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 RUN pip3 install --no-cache-dir \
     fastapi \
     uvicorn \
-    diffusers>=0.33.0 \
+    "diffusers>=0.33.0" \
     transformers \
     accelerate \
     sentencepiece \
@@ -66,14 +64,11 @@ RUN pip3 install --no-cache-dir \
     huggingface_hub
 
 # Copy Application Code
-COPY . /app
-
-# Entrypoint Script for Model Management
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+COPY . .
+RUN chmod +x entrypoint.sh
 
 # Expose the API Port
 EXPOSE 8000
 
 # Start the Service
-CMD ["/app/entrypoint.sh"]
+CMD ["./entrypoint.sh"]
