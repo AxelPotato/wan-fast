@@ -24,11 +24,10 @@ RUN pip3 install --no-cache-dir --retries 5 --timeout 120 \
     --index-url https://download.pytorch.org/whl/cu128
 
 # Compile SageAttention 2 from Source
-# We set NVCC flags to optimize for Blackwell (SM_120 is implicit in CUDA 12.8 nvcc)
-RUN git clone https://github.com/thu-ml/SageAttention.git \
+RUN pip3 install --no-cache-dir packaging setuptools wheel \
+    && git clone https://github.com/thu-ml/SageAttention.git \
     && cd SageAttention \
-    && export MAX_JOBS=8 \
-    && pip3 install .
+    && MAX_JOBS=8 pip3 install --no-cache-dir .
 
 # -----------------------------------------------------------------------------
 # Stage 2: Runtime (Production Environment)
