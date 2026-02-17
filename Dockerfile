@@ -24,10 +24,12 @@ RUN pip3 install --no-cache-dir --retries 5 --timeout 120 \
     --index-url https://download.pytorch.org/whl/cu128
 
 # Compile SageAttention 2 from Source
-RUN pip3 install --no-cache-dir packaging setuptools wheel \
+# TORCH_CUDA_ARCH_LIST is required since no GPU is available during docker build
+ENV TORCH_CUDA_ARCH_LIST="12.0"
+RUN pip3 install --no-cache-dir --upgrade pip packaging setuptools wheel \
     && git clone https://github.com/thu-ml/SageAttention.git \
     && cd SageAttention \
-    && MAX_JOBS=8 pip3 install --no-cache-dir .
+    && MAX_JOBS=4 pip3 install --no-cache-dir --no-build-isolation .
 
 # -----------------------------------------------------------------------------
 # Stage 2: Runtime (Production Environment)
@@ -63,6 +65,7 @@ RUN pip3 install --no-cache-dir \
     huggingface_hub
 
 # Copy Application Code
+WORKDIR /workspace
 COPY . .
 RUN chmod +x entrypoint.sh
 

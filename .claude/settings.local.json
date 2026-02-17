@@ -1,0 +1,23 @@
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
+    "ANTHROPIC_AUTH_TOKEN": "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",
+    "ANTHROPIC_API_KEY": ""
+  },
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(python -m py_compile src/main.py)",
+      "Bash(python -m py_compile src/models/wan_velocity_generator.py)",
+      "Bash(python -m py_compile src/models/qwen_wrapper.py)",
+      "Bash(python -m py_compile src/utils/queue_handler.py)",
+      "Bash(python -m py_compile src/models/manager.py)",
+      "Bash(python -m py_compile src/main.py verify_installation.py)",
+      "Bash(pip show:*)",
+      "Bash(python:*)"
+    ]
+  }
+}

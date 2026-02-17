@@ -9,8 +9,8 @@ MODEL_ROOT = os.getenv("MODEL_ROOT", "/workspace/models")
 
 # 1. The Official Base Model (Diffusers Format)
 # Contains: T5 Encoder, VAE, Tokenizer, and Scheduler configs
-OFFICIAL_REPO_ID = "Wan-AI/Wan2.2-T2V-A14B"
-OFFICIAL_DIR = os.path.join(MODEL_ROOT, "Wan2.2-T2V-A14B")
+OFFICIAL_REPO_ID = "Wan-AI/Wan2.2-T2V-A14B-Diffusers"
+OFFICIAL_DIR = os.path.join(MODEL_ROOT, "Wan2.2-T2V-A14B-Diffusers")
 
 # 2. The Distilled Model (LightX2V - 4 Steps)
 # Contains: Optimized DiT weights in FP8 (e4m3fn)
@@ -39,6 +39,7 @@ def download_official_base():
             local_dir=OFFICIAL_DIR,
             local_dir_use_symlinks=False,
             resume_download=True,
+            ignore_patterns=["transformer/*", "*.png", "*.md"],
         )
         print(f"[+] Official model downloaded to: {OFFICIAL_DIR}")
     except Exception as e:

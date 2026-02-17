@@ -34,7 +34,7 @@ def seconds_to_frames(seconds: float) -> int:
 # --- Pydantic Models for Validation ---
 class GenerationRequest(BaseModel):
     prompt: str
-    negative_prompt: str = "low quality, distorted, deformation, dull"
+    negative_prompt: str = "low quality, distorted, deformation, dull, nudity, text, error, blurry, gore, disfigured, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality"
     width: int = 1280
     height: int = 720
     seconds: float = 3.375  # ~81 frames at 24fps
@@ -99,7 +99,7 @@ job_queue = multiprocessing.Queue()
 manager = multiprocessing.Manager()
 job_status = manager.dict()
 OUTPUT_DIR = "/workspace/outputs"
-MODEL_PATH = "/workspace/models/Wan2.2-14B"
+MODEL_PATH = "/workspace/models/Wan2.2-T2V-A14B-Diffusers"
 
 @app.on_event("startup")
 def startup_event():
